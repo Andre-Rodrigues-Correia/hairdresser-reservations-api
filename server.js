@@ -30,8 +30,6 @@ const routesApi = require('./routes/routes')
 
 app.use('/', routesApi)
 
-
-
 //rota principal
 app.get('/', (req, res) =>{
 

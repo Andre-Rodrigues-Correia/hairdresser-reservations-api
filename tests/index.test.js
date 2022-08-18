@@ -1,13 +1,10 @@
+const request = require('supertest')
+const app = require('../server')
 
+describe('index.js test', ()=>{
+    it('should get main route', async ()=>{
+        const res = await request(app).get('/')
 
-describe('Simple Test', ()=>{
-    it('true == true', ()=>{
-        expect(true).toBe(true)
-    })
-
-    it('1 == 1', ()=>{
-        expect(1).toEqual(1)
+        expect(res.body).toHaveProperty('message')
     })
 })
-
-
