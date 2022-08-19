@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express()
-
+const { connectDB } = require('./database/connection');
 //mongoose - configuração do mongo
-const mongoose = require("mongoose")
+
 
 //cors - evitar erros de cors
 const cors = require("cors")
@@ -26,10 +26,11 @@ app.use(
 app.use(express.json())
 
 //definindo a constante da rota
-const routesApi = require('./routes/routes')
+const usuariosRoutes = require('./src/routes/usuariosRoutes')
+const reservaRoutes = require('./src/routes/reservasRoutes')
 
-app.use('/', routesApi)
-
+app.use('/usuarios', usuariosRoutes)
+app.use('/reservas', reservaRoutes)
 //rota principal
 app.get('/', (req, res) =>{
 
@@ -37,15 +38,7 @@ app.get('/', (req, res) =>{
 
 })
 
-const DB_USER = process.env.DB_USER;
-const DB_PASS =  encodeURIComponent(process.env.DB_PASS)
+connectDB()
 
-mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASS}@cluster0.idgbyqs.mongodb.net/?retryWrites=true&w=majority`)
-.then(() => {
-    console.log('conectamos ao banco de dados')
-})
-.catch((err) => {
-    console.log(err)
-})
 
 module.exports = app
