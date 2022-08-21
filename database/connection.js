@@ -10,17 +10,19 @@ let mongod = null;
 
 
 const connectDB = async () => {
+
+    const istest = process.env.NODE_ENV ? 'test' : '';
     try {
-      let dbUrl = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster0.idgbyqs.mongodb.net/?retryWrites=true&w=majority`;
-      if (process.env.NODE_ENV === 'test') {
+      if (istest == 'test') {
         mongod = await MongoMemoryServer.create();
-        dbUrl = mongod.getUri();
+        let dbUrltest = mongod.getUri();
+        const conn = await mongoose.connect(dbUrltest);
+      }else{
+        let dbUrl = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster0.idgbyqs.mongodb.net/?retryWrites=true&w=majority`;
+        const conn = await mongoose.connect(dbUrl);
+        console.log('conectamos')
       }
-  
-      const conn = await mongoose.connect(dbUrl);
-  
-  
-      console.log(`MongoDB connected: ${conn.connection.host}`);
+   //console.log(`MongoDB connected: ${conn.connection.host}`);
     } catch (err) {
       console.log(err);
       process.exit(1);
