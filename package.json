@@ -20,10 +20,12 @@
   },
   "homepage": "https://github.com/Andre-Rodrigues-Correia/hairdresser-reservations-api#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "jest": "^28.1.3",
+    "jsonwebtoken": "^8.5.1",
     "mongodb-memory-server": "^8.8.0",
     "mongoose": "^6.5.2",
     "nodemon": "^2.0.19",

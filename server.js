@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express()
 const { connectDB } = require('./database/connection');
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
 //mongoose - configuração do mongo
 
 
