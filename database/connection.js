@@ -12,6 +12,7 @@ let mongod = null;
 const connectDB = async () => {
 
     const istest = process.env.NODE_ENV ? 'test' : '';
+
     try {
       if (istest == 'test') {
         mongod = await MongoMemoryServer.create();
