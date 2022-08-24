@@ -143,6 +143,78 @@ routes.post('/login', async(req, res)=>{
 
 })
 
+routes.put('/atualizar/:id', async (req, res)=>{
+    const id = req.params.id;
+    const {name, email, password, confirmPassword} = req.body;
+
+    const user = Usuarios.findById(id)
+
+    if(!user){
+        res.status(500).json({message: 'usuario não encontrado'})
+        return
+    }
+
+    if(!name){
+        res.status(500).json({message: 'por favor, preencha o nome'})
+        return
+    }
+
+    if(!email){
+        res.status(500).json({message: 'por favor, preencha o e-mail'})
+        return
+    }
+
+    if(!password){
+        res.status(500).json({message: 'por favor, preencha a senha'})
+        return
+    }
+
+    if(!confirmPassword){
+        res.status(500).json({message: 'por favor, preencha a confirmação da senha'})
+        return
+    }
+
+    if(password !== confirmPassword){
+        res.status(500).json({message: 'as senhas não são iguais'})
+        return
+    }
+
+    const salt = await bcrypt.genSalt(12)
+    const passwordHash =  await bcrypt.hash(password, salt)
+
+    const usuario = new Usuarios({
+        name,
+        email,
+        password: passwordHash
+    })
+
+    try {
+        const updateUsuario = await Usuarios.updateOne({_id: user._id}, usuario);
+        res.status(200).json({message: 'usuario cadastrado com sucesso'})
+    } catch (error) {
+        res.status(500).json({message: 'error'})
+    }
+})
+
+routes.delete('/deletar/:id', async(req, res)=>{
+
+    const id = req.params.id;
+    const usuario = await Usuarios.findOne({_id: id})
+
+    if(!usuario){
+        res.status(500).json({message: 'usuario não encontrado'})
+        return
+    }
+
+    
+    try {
+        const delete_reserva = await Usuarios.deleteOne({_id: id})
+        res.status(200).json({message: 'usuario deletado com sucesso'})
+    } catch (error) {
+        res.status(500).json({message: 'error'})
+    }
+})
+
 
 
 module.exports = routes

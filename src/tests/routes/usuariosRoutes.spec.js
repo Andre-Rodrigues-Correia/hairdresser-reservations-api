@@ -1,6 +1,8 @@
 const request = require('supertest');
-const app = require('../../../server')
+const app = require('../../../server');
+
 const { connectDB, disconnectDB } = require('../../../database/connection');
+const Usuarios = require('../../models/Usuarios');
 
 
    
@@ -9,6 +11,19 @@ describe('test routes usuarios', ()=>{
     let _id_valido = null;
 
     beforeAll(async ()=>{
+        const test = await request(app).post('/usuarios/cadastrar').send({
+            name: 'usuario test',
+            email:'usuario_test@emial.com',
+            password:'1234',
+            confirmPassword:'1234',
+        })
+
+        const user = await Usuarios.findOne({email: "usuario_test@emial.com"});
+
+        _id_valido = user._id
+        // const res2 = await request(app).get(`/usuarios/${_id_valido}`)
+
+        // _id_valido = res2.body[0]._id;
 
     });
   
@@ -94,5 +109,70 @@ describe('test routes usuarios', ()=>{
         expect(resincorrecPassword.status).toEqual(500)
         expect(resNotEmail.status).toEqual(500)
         expect(resNotPassword.status).toEqual(500)
+    })
+
+    it('test route atualizar', async()=>{
+        const res_completa = await request(app).put(`/usuarios/atualizar/${_id_valido}`).send({
+            name: 'usuario 1',
+            email:'usuario1@emial.com',
+            password:'1234',
+            confirmPassword:'1234',
+        })
+
+        const res_not_name = await request(app).put(`/usuarios/atualizar/${_id_valido}`).send({
+            email:'usuario1@emial.com',
+            password:'1234',
+            confirmPassword:'1234',
+        })
+
+        const res_not_email = await request(app).put(`/usuarios/atualizar/${_id_valido}`).send({
+            name: 'usuario 1',
+            password:'1234',
+            confirmPassword:'1234',
+        })
+
+        const res_not_pass = await request(app).put(`/usuarios/atualizar/${_id_valido}`).send({
+            name: 'usuario 1',
+            email:'usuario1@emial.com',
+            confirmPassword:'1234',
+        })
+
+        const res_not_confirm_pass = await request(app).put(`/usuarios/atualizar/${_id_valido}`).send({
+            name: 'usuario 1',
+            email:'usuario1@emial.com',
+            password:'1234',
+        })
+
+        const res_diferenct_pass = await request(app).put(`/usuarios/atualizar/${_id_valido}`).send({
+            name: 'usuario 1',
+            email:'usuario1@emial.com',
+            password:'1234',
+            confirmPassword:'12345',
+        })
+
+        const res_not_user = await request(app).put(`/usuarios/atualizar/1234`).send({
+            name: 'usuario 1',
+            email:'usuario1@emial.com',
+            password:'1234',
+            confirmPassword:'12345',
+        })
+     
+        expect(res_completa.status).toEqual(200)
+        expect(res_not_name.status).toEqual(500)
+        expect(res_not_email.status).toEqual(500)
+        expect(res_not_pass.status).toEqual(500)
+        expect(res_not_confirm_pass.status).toEqual(500)
+        expect(res_diferenct_pass.status).toEqual(500)
+        expect(res_not_user.status).toEqual(500)
+    })
+
+    it('test route deletar', async()=>{
+        const id_invalido = 1234
+
+        const res = await request(app).delete(`/usuarios/deletar/${_id_valido}`)
+        const res_not_valid = await request(app).delete(`/usuarios/deletar/`)
+
+        expect(res.status).toEqual(200)
+        expect(res_not_valid.status).toEqual(404)
     })
 })
